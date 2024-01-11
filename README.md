@@ -23,7 +23,6 @@ A React Context provider for quickly and easily building a shopping cart using N
   <a href="https://github.com/mrvautin/react-shoppingcart/stargazers">
     <img src="https://img.shields.io/github/stars/mrvautin/react-shoppingcart" alt="Forks on GitHub" />
   </a>
-  <img src="https://badgen.net/bundlephobia/minzip/mrvautin/react-shoppingcart" alt="minified + gzip size" />
 </p>
 
 - Persistent local storage using React Context
