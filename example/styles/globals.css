@@ -1,0 +1,23 @@
+body {
+  margin: 20px
+}
+
+.button-success,
+.button-error {
+    color: white;
+    border-radius: 4px;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    margin: 5px;
+}
+
+.button-success {
+    background: rgb(28, 184, 65);
+}
+
+.button-error {
+    background: rgb(202, 60, 60);
+}
+
+.font-bold {
+  font-weight: 900;
+}
