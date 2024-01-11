@@ -1,5 +1,5 @@
-<h1 align="center">
-  react-shoppingcart
+<h1 align="center" style="display: flex; align-items: center;">
+  <img src="./logo.png" style="height: 80px; padding-right: 10px" />react-shoppingcart
 </h1>
 <h4 align="center">
 A React Context provider for quickly and easily building a shopping cart using Next.js or any other React framework.
@@ -24,12 +24,13 @@ A React Context provider for quickly and easily building a shopping cart using N
   <img src="https://badgen.net/bundlephobia/minzip/react-shoppingcart" alt="minified + gzip size" />
 </p>
 
-- Persistent local storage
+- Persistent local storage using React Context
 - Works with Next, Gatsby, React
 - Supports hooks to listen for events
 - Written in Typescript
-- Supports discounts
-- Supports product variants
+- Supports discount codes
+- Supports product variants - Size, colour etc
+- Supports cart metadata
 
 
 ## Install

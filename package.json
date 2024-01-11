@@ -1,15 +1,34 @@
 {
   "name": "react-shoppingcart",
   "version": "1.0.0",
-  "description": "A React Context provider for quickly and easily building a shopping cart using Next.js or any other React framework.",
-  "author": "mrvautin",
+  "description": "A React Context provider to quickly and easily build a shopping cart using Next.js or any other React framework.",
   "license": "Apache-2.0",
-  "repository": "mrvautin/react-shoppingcart",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mrvautin/react-shoppingcart.git"
+  },
   "main": "dist/index.js",
   "module": "dist/index.modern.js",
   "source": "src/index.tsx",
+  "homepage": "https://github.com/mrvautin/react-shoppingcart#readme",
   "engines": {
     "node": ">=10"
+  },
+  "keywords": [
+    "react",
+    "reactjs",
+    "nextjs",
+    "next.js",
+    "shoppingcart",
+    "react component",
+    "Gatsby",
+    "Vite",
+    "Grommet"
+  ],
+  "author": {
+    "name": "Mark Moffat",
+    "email": "hi@markmoffat.com",
+    "url": "https://markmoffat.com/"
   },
   "scripts": {
     "build": "microbundle-crl --no-compress --format modern,cjs",
