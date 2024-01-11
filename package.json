@@ -1,6 +1,6 @@
 {
   "name": "@mrvautin/react-shoppingcart",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A React Context provider to quickly and easily build a shopping cart using Next.js or any other React framework.",
   "license": "Apache-2.0",
   "repository": {
