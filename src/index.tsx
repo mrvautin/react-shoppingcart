@@ -70,7 +70,7 @@ export interface CartProviderState {
 export type Actions =
     | { type: 'ADD_ITEM'; payload: Item }
     | { type: 'REMOVE_ITEM'; itemId: Item['itemId'] }
-    | { type: 'UPDATE_ITEM'; payload: object }
+    | { type: 'UPDATE_ITEM'; itemId: Item['itemId']; payload: object }
     | { type: 'ADD_DISCOUNT'; payload: Discount }
     | { type: 'REMOVE_DISCOUNT' }
     | { type: 'EMPTY_CART' }
@@ -112,6 +112,10 @@ const reducer = (state: CartProviderState, action: Actions) => {
 
         case 'UPDATE_ITEM': {
             const items = state.items.map((item: Item) => {
+                if (item.itemId !== action.itemId) {
+                    return item;
+                }
+
                 return {
                     ...item,
                     ...action.payload,
@@ -366,12 +370,12 @@ export const CartProvider: React.FC<{
 
         // If item is in cart, update existing item
         const payload = {
-            ...item,
-            itemId: itemHash,
+            ...currentItem,
             quantity: currentItem.quantity + quantity,
         };
         dispatch({
             type: 'UPDATE_ITEM',
+            itemId: currentItem.itemId,
             payload,
         });
 
@@ -443,6 +447,7 @@ export const CartProvider: React.FC<{
         const payload = { ...currentItem, quantity: newQuantity };
         dispatch({
             type: 'UPDATE_ITEM',
+            itemId: currentItem.itemId,
             payload,
         });
 

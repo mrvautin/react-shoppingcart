@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import Cart from 'react-shoppingcart';
+import Cart from '../components/Cart';
 
 export default function Home() {
     return (
