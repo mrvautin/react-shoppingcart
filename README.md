@@ -1,5 +1,7 @@
-<h1 align="center" style="display: flex; align-items: center;">
-  <img src="./logo.png" style="height: 80px; padding-right: 10px" />react-shoppingcart
+<p align="center">
+  <img align="center" src="./logo.png" style="height: 150px;" />
+</p>
+<h1 align="center">react-shoppingcart
 </h1>
 <h4 align="center">
 A React Context provider for quickly and easily building a shopping cart using Next.js or any other React framework.
