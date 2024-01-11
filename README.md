@@ -14,16 +14,16 @@ A React Context provider for quickly and easily building a shopping cart using N
   <a href="https://npmjs.org/package/@mrvautin/react-shoppingcart">
     <img src="https://img.shields.io/npm/dw/@mrvautin/react-shoppingcart.svg" alt="Downloads/week" />
   </a>
-    <a href="https://github.com/notrab/@mrvautin/react-shoppingcart/blob/main/package.json">
+    <a href="https://github.com/mrvautin/react-shoppingcart/blob/main/package.json">
     <img src="https://img.shields.io/npm/l/@mrvautin/react-shoppingcart.svg" alt="License" />
   </a>
-  <a href="https://github.com/notrab/@mrvautin/react-shoppingcart/network/members">
-    <img src="https://img.shields.io/github/forks/notrab/@mrvautin/react-shoppingcart" alt="Forks on GitHub" />
+  <a href="https://github.com/mrvautin/react-shoppingcart/network/members">
+    <img src="https://img.shields.io/github/forks/mrvautin/react-shoppingcart" alt="Forks on GitHub" />
   </a>
-  <a href="https://github.com/notrab/@mrvautin/react-shoppingcart/stargazers">
-    <img src="https://img.shields.io/github/stars/notrab/@mrvautin/react-shoppingcart" alt="Forks on GitHub" />
+  <a href="https://github.com/mrvautin/react-shoppingcart/stargazers">
+    <img src="https://img.shields.io/github/stars/mrvautin/react-shoppingcart" alt="Forks on GitHub" />
   </a>
-  <img src="https://badgen.net/bundlephobia/minzip/@mrvautin/react-shoppingcart" alt="minified + gzip size" />
+  <img src="https://badgen.net/bundlephobia/minzip/mrvautin/react-shoppingcart" alt="minified + gzip size" />
 </p>
 
 - Persistent local storage using React Context
