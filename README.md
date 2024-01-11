@@ -407,3 +407,9 @@ An example `Next.js` project is stored in `/example`. You can see the basics of 
 2. Install: `yarn install`
 3. Start up Next.js: `yarn run dev`
 4. Visit the example: `http://localhost:3000`
+
+# Tests
+
+Running tests with:
+
+`yarn run test`
