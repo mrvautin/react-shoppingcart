@@ -8,22 +8,22 @@ A React Context provider for quickly and easily building a shopping cart using N
 </h4>
 
 <p align="center">
-  <a href="https://npmjs.org/package/react-shoppingcart">
-    <img src="https://img.shields.io/npm/v/react-shoppingcart.svg" alt="Version" />
+  <a href="https://npmjs.org/package/@mrvautin/react-shoppingcart">
+    <img src="https://img.shields.io/npm/v/@mrvautin/react-shoppingcart.svg" alt="Version" />
   </a>
-  <a href="https://npmjs.org/package/react-shoppingcart">
-    <img src="https://img.shields.io/npm/dw/react-shoppingcart.svg" alt="Downloads/week" />
+  <a href="https://npmjs.org/package/@mrvautin/react-shoppingcart">
+    <img src="https://img.shields.io/npm/dw/@mrvautin/react-shoppingcart.svg" alt="Downloads/week" />
   </a>
-    <a href="https://github.com/notrab/react-shoppingcart/blob/main/package.json">
-    <img src="https://img.shields.io/npm/l/react-shoppingcart.svg" alt="License" />
+    <a href="https://github.com/notrab/@mrvautin/react-shoppingcart/blob/main/package.json">
+    <img src="https://img.shields.io/npm/l/@mrvautin/react-shoppingcart.svg" alt="License" />
   </a>
-  <a href="https://github.com/notrab/react-shoppingcart/network/members">
-    <img src="https://img.shields.io/github/forks/notrab/react-shoppingcart" alt="Forks on GitHub" />
+  <a href="https://github.com/notrab/@mrvautin/react-shoppingcart/network/members">
+    <img src="https://img.shields.io/github/forks/notrab/@mrvautin/react-shoppingcart" alt="Forks on GitHub" />
   </a>
-  <a href="https://github.com/notrab/react-shoppingcart/stargazers">
-    <img src="https://img.shields.io/github/stars/notrab/react-shoppingcart" alt="Forks on GitHub" />
+  <a href="https://github.com/notrab/@mrvautin/react-shoppingcart/stargazers">
+    <img src="https://img.shields.io/github/stars/notrab/@mrvautin/react-shoppingcart" alt="Forks on GitHub" />
   </a>
-  <img src="https://badgen.net/bundlephobia/minzip/react-shoppingcart" alt="minified + gzip size" />
+  <img src="https://badgen.net/bundlephobia/minzip/@mrvautin/react-shoppingcart" alt="minified + gzip size" />
 </p>
 
 - Persistent local storage using React Context
@@ -40,12 +40,12 @@ A React Context provider for quickly and easily building a shopping cart using N
 `npm`:
 
 ```bash
-npm install react-shoppingcart --save
+npm install @mrvautin/react-shoppingcart --save
 ```
 
 `yarn`:
 ```bash
-yarn add react-shoppingcart 
+yarn add @mrvautin/react-shoppingcart 
 ```
 
 # Getting started
@@ -56,7 +56,7 @@ Wrap your app in the `<CartProvider>` (eg: Add to your `_app.tsx`):
 
 ``` js
 import type { AppProps } from 'next/app';
-import { CartProvider } from 'react-shoppingcart';
+import { CartProvider } from '@mrvautin/react-shoppingcart';
 
 export default function App({ Component, pageProps }: AppProps) {
     return (
@@ -95,7 +95,7 @@ On the `<CartProvider>` you can add any hooks you need to listen on:
 
 ``` js
 import type { AppProps } from 'next/app';
-import { CartProvider } from 'react-shoppingcart';
+import { CartProvider } from '@mrvautin/react-shoppingcart';
 
 export default function App({ Component, pageProps }: AppProps) {
     return (
@@ -111,7 +111,7 @@ export default function App({ Component, pageProps }: AppProps) {
 ## Add to your `Component`
 
 ``` js
-import { useCart } from 'react-shoppingcart';
+import { useCart } from '@mrvautin/react-shoppingcart';
 ...
 const {
     items,
