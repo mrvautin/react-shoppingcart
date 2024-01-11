@@ -65,10 +65,10 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-2.0.2.tgz#d9fae00a2d5cb40f92cfe64b47ad749fbc38f917"
   integrity sha512-6EwiSjwWYP7pTckG6I5eyFANjPhmPjUX9JRLUSfNPC7FX7zK9gyZAfUEaECL6ALTpGX5AjnBq3C9XmVWPitNpw==
 
-"@mrvautin/react-shoppingcart@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@mrvautin/react-shoppingcart/-/react-shoppingcart-1.0.0.tgz#c1a6747ae4379ad0beada0841d4bf4cccb10e5bd"
-  integrity sha512-E1f1rjCASwYlVZ18pmzZes3Iwquo2I7RQzZUECI9iduGYQv3Qqw9YvD3i6DccsuWoTnO3oaeCPpcI03LogCLKQ==
+"@mrvautin/react-shoppingcart@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@mrvautin/react-shoppingcart/-/react-shoppingcart-1.0.1.tgz#eb57f5d82fdef7d8a8c4f2e117bdf1e25e9d99b7"
+  integrity sha512-sg5EobBueLXKB5XQMv8ZQlhhn7n0nXu6Jm0aVoAwvTJZDHLyLsa58y8d1Eec227o/6GS1TcHHHg70F/ZceaoIQ==
 
 "@next/env@14.0.4":
   version "14.0.4"

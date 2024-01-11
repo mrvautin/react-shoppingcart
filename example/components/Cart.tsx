@@ -1,5 +1,5 @@
 import React from 'react';
-import { useCart } from 'react-shoppingcart';
+import { useCart } from '@mrvautin/react-shoppingcart';
 
 export default function Cart() {
     const {
@@ -36,7 +36,7 @@ export default function Cart() {
     }
 
     function reduceQuantity(item: any) {
-        updateItemQuantity(item, 'reduce', 1);
+        updateItemQuantity(item, 'decrease', 1);
     }
 
     function removeCart() {
@@ -140,7 +140,7 @@ export default function Cart() {
                                 <td className="font-bold" colSpan={4}>
                                     Cart total:
                                 </td>
-                                <td>{formatAmount(cartTotal())}</td>
+                                <td>{formatAmount(cartTotal)}</td>
                             </tr>
                         </tbody>
                     </table>
