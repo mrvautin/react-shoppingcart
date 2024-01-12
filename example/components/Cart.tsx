@@ -10,7 +10,13 @@ export default function Cart() {
         removeItem,
         emptyCart,
         updateItemQuantity,
-
+        cartNetTotal,
+        cartDiscountTotal,
+        cartDiscountText,
+        discount,
+        addDiscount,
+        removeDiscount,
+        locale,
     } = useCart();
 
     // Demo products
@@ -32,6 +38,20 @@ export default function Cart() {
         },
     ];
 
+    // Discounts
+    const amtDiscount = {
+        id: "discount1",
+        code: "AMOUNT_DISCOUNT",
+        type: "amount",
+        value: 2000,
+    } as any;
+    const percentDiscount = {
+        id: "discount2",
+        code: "PERCENT_DISCOUNT",
+        type: "percent",
+        value: 1000,
+    } as any;
+
     function removeFromCart(item: any) {
         removeItem(item);
     }
@@ -42,6 +62,41 @@ export default function Cart() {
 
     function removeCart() {
         emptyCart();
+    }
+
+    function applyDiscount(type: string) {
+        if (type === "amount") {
+          addDiscount(amtDiscount);
+        }
+        if (type === "percent") {
+          addDiscount(percentDiscount);
+        }
+    }
+
+    function showDiscounts() {
+        if (discount && !discount.code) {
+          return;
+        }
+        return (
+          <>
+            <tr>
+              <td className="font-bold" colSpan={4}>
+                Discount ({cartDiscountText}):
+              </td>
+              <td>{formatAmount(cartDiscountTotal)}</td>
+            </tr>
+            <tr>
+              <td className="font-bold" colSpan={4}>
+                Net total:
+              </td>
+              <td>{formatAmount(cartNetTotal)}</td>
+            </tr>
+          </>
+        );
+    }
+
+    function clearDiscounts() {
+        removeDiscount();
     }
 
     function formatAmount(amt: any) {
@@ -58,12 +113,34 @@ export default function Cart() {
                 <div className="pure-u-1">
                     <h1>react-shoppingcart demo</h1>
                 </div>
-                <button
-                    className="pure-button button-error"
-                    onClick={() => removeCart()}
-                >
-                    Empty cart
-                </button>
+                <div className="pure-u-1">
+                    <button
+                        className="pure-button button-error"
+                        onClick={() => removeCart()}
+                    >
+                        Empty cart
+                    </button>
+                    <button
+                        className="pure-button button-error"
+                        onClick={() => clearDiscounts()}
+                    >
+                        Remove discounts
+                    </button>
+                </div>
+                <div className="pure-u-1">
+                    <button
+                        className="pure-button button-success"
+                        onClick={() => applyDiscount("amount")}
+                    >
+                        Add $20.00 discount
+                    </button>
+                    <button
+                        className="pure-button button-success"
+                        onClick={() => applyDiscount("percent")}
+                    >
+                        Add 10% discount
+                    </button>
+                </div>
                 <div className="pure-u-1">
                     <h3>Products</h3>
                 </div>
@@ -146,6 +223,7 @@ export default function Cart() {
                                 </td>
                                 <td>{formatAmount(cartTotal)}</td>
                             </tr>
+                            {showDiscounts()}
                         </tbody>
                     </table>
                 </div>
