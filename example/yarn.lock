@@ -66,9 +66,9 @@
   integrity sha512-6EwiSjwWYP7pTckG6I5eyFANjPhmPjUX9JRLUSfNPC7FX7zK9gyZAfUEaECL6ALTpGX5AjnBq3C9XmVWPitNpw==
 
 "@mrvautin/react-shoppingcart@~1.0.3":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@mrvautin/react-shoppingcart/-/react-shoppingcart-1.0.2.tgz#d26e5f0e7cf92f852a17c67b2d0e71a836316969"
-  integrity sha512-R18cIpUweHTq4pOtSnrF/+8dnDzZNCL3Wvnks/k+azV2vwampF4A8N5bcawOmWM3jxyGkrTpxmi/sKuXG9wHBA==
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@mrvautin/react-shoppingcart/-/react-shoppingcart-1.0.3.tgz#03edbcedf442e0682dcdc1c9c86d3266c01f89c0"
+  integrity sha512-hGNTCMiLhi2P7mq1aFwCRSKBv/yxigx3L7lA1uAXaegkNbUXCioDTF+UuGt0grymsTcuSA+63sYNdJhJW8EhWQ==
 
 "@next/env@14.0.4":
   version "14.0.4"
