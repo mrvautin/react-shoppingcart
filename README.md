@@ -33,7 +33,6 @@ A React Context provider for quickly and easily building a shopping cart using N
 - Supports product variants - Size, colour etc
 - Supports cart metadata
 
-
 ## Install
 
 `npm`:

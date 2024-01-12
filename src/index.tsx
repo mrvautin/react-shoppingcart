@@ -426,7 +426,7 @@ export const CartProvider: React.FC<{
             );
         }
 
-        // If quanity is already one and being decreased, we remove it
+        // If quantity is already one and being decreased, we remove it
         if (direction === 'decrease') {
             const netQuantity = currentItem.quantity - quantity;
             if (netQuantity < 1) {
@@ -513,7 +513,7 @@ export const CartProvider: React.FC<{
     const getItem = (item: Item) => {
         const itemCopy = deepClone(item);
         const itemHash = generateHash(itemCopy as any);
-        state.items.find((i: Item) => i.itemId === itemHash);
+        return state.items.find((i: Item) => i.itemId === itemHash);
     };
 
     return (

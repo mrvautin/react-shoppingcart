@@ -201,6 +201,36 @@ describe('react-shoppingcart tests', () => {
         expect(result.current.totalUniqueItems).toBe(1);
     });
 
+    test('Get item', () => {
+        const { result } = renderHook(() => useCart(), {
+            wrapper: CartProvider,
+        });
+        act(() => result.current.emptyCart());
+
+        // Add an item
+        act(() => result.current.addItem(exampleProducts[0]));
+
+        const getItem = result.current.getItem(exampleProducts[0]);
+
+        expect(getItem.id).toBe(exampleProducts[0].id);
+        expect(getItem.name).toBe(exampleProducts[0].name);
+        expect(getItem.quantity).toBe(1);
+    });
+
+    test('Get item - Not in cart', () => {
+        const { result } = renderHook(() => useCart(), {
+            wrapper: CartProvider,
+        });
+        act(() => result.current.emptyCart());
+
+        // Add an item
+        act(() => result.current.addItem(exampleProducts[0]));
+
+        const getItem = result.current.getItem(exampleProducts[1]);
+
+        expect(getItem).toBe(undefined);
+    });
+
     test('Increase quantity', async () => {
         const { result } = renderHook(() => useCart(), {
             wrapper: CartProvider,

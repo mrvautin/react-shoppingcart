@@ -6,6 +6,7 @@ export default function Cart() {
         items,
         addItem,
         cartTotal,
+        getItem,
         removeItem,
         emptyCart,
         updateItemQuantity,
@@ -91,9 +92,12 @@ export default function Cart() {
                                         </button>
                                         <button
                                             className="pure-button button-error"
-                                            onClick={() =>
-                                                reduceQuantity(product)
-                                            }
+                                            onClick={() => {
+                                                const checkItem = getItem(product);
+                                                if(checkItem){
+                                                    reduceQuantity(product)
+                                                }
+                                            }}
                                         >
                                             Reduce quantity
                                         </button>
