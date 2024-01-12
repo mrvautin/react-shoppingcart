@@ -16,7 +16,6 @@ export default function Cart() {
         discount,
         addDiscount,
         removeDiscount,
-        locale,
     } = useCart();
 
     // Demo products
