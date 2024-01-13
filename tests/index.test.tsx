@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { CartProvider, Discount, Item, useCart } from '../src';
+import { CartProvider, Discount, Item, Shipping, useCart } from '../src';
 import { describe, expect, test } from '@jest/globals';
 import { act } from '@testing-library/react-hooks';
 import { renderHook } from '@testing-library/react';
@@ -36,6 +36,11 @@ const exampleDiscounts = [
         value: 1000,
     } as Discount,
 ];
+
+const exampleShipping = {
+    description: 'Flat rate shipping',
+    cost: 1000,
+} as Shipping;
 
 describe('react-shoppingcart tests', () => {
     test('sets cartId', () => {
@@ -126,7 +131,7 @@ describe('react-shoppingcart tests', () => {
         act(() => result.current.addItem(exampleProducts[0]));
 
         expect(result.current.items).toHaveLength(1);
-        expect(result.current.totalItems).toBe(1);
+        expect(result.current.totalNumberItems).toBe(1);
         expect(result.current.totalUniqueItems).toBe(1);
     });
 
@@ -140,7 +145,7 @@ describe('react-shoppingcart tests', () => {
         act(() => result.current.addItem(exampleProducts[0], 5));
 
         expect(result.current.items).toHaveLength(1);
-        expect(result.current.totalItems).toBe(5);
+        expect(result.current.totalNumberItems).toBe(5);
         expect(result.current.totalUniqueItems).toBe(1);
     });
 
@@ -182,7 +187,7 @@ describe('react-shoppingcart tests', () => {
 
         // Check both items are in the cart
         expect(result.current.items).toHaveLength(2);
-        expect(result.current.totalItems).toBe(2);
+        expect(result.current.totalNumberItems).toBe(2);
         expect(result.current.totalUniqueItems).toBe(2);
     });
 
@@ -197,7 +202,7 @@ describe('react-shoppingcart tests', () => {
         act(() => result.current.addItem(exampleProducts[0]));
 
         expect(result.current.items.length).toBe(1);
-        expect(result.current.totalItems).toBe(2);
+        expect(result.current.totalNumberItems).toBe(2);
         expect(result.current.totalUniqueItems).toBe(1);
     });
 
@@ -250,7 +255,7 @@ describe('react-shoppingcart tests', () => {
         );
 
         expect(result.current.items.length).toBe(1);
-        expect(result.current.totalItems).toBe(3);
+        expect(result.current.totalNumberItems).toBe(3);
         expect(result.current.totalUniqueItems).toBe(1);
     });
 
@@ -265,7 +270,7 @@ describe('react-shoppingcart tests', () => {
         act(() => result.current.addItem(exampleProducts[0]));
         act(() => result.current.addItem(exampleProducts[0]));
 
-        expect(result.current.totalItems).toBe(3);
+        expect(result.current.totalNumberItems).toBe(3);
 
         // Update quantity
         act(() =>
@@ -277,7 +282,7 @@ describe('react-shoppingcart tests', () => {
         );
 
         expect(result.current.items).toHaveLength(1);
-        expect(result.current.totalItems).toBe(1);
+        expect(result.current.totalNumberItems).toBe(1);
         expect(result.current.totalUniqueItems).toBe(1);
     });
 
@@ -292,7 +297,7 @@ describe('react-shoppingcart tests', () => {
         act(() => result.current.addItem(exampleProducts[0]));
         act(() => result.current.addItem(exampleProducts[0]));
 
-        expect(result.current.totalItems).toBe(3);
+        expect(result.current.totalNumberItems).toBe(3);
 
         // Update quantity
         expect(() => {
@@ -315,7 +320,7 @@ describe('react-shoppingcart tests', () => {
         // Add an item
         act(() => result.current.addItem(exampleProducts[0]));
 
-        expect(result.current.totalItems).toBe(1);
+        expect(result.current.totalNumberItems).toBe(1);
 
         // Update quantity
         act(() =>
@@ -327,7 +332,7 @@ describe('react-shoppingcart tests', () => {
         );
 
         expect(result.current.items).toHaveLength(0);
-        expect(result.current.totalItems).toBe(0);
+        expect(result.current.totalNumberItems).toBe(0);
         expect(result.current.totalUniqueItems).toBe(0);
         expect(result.current.cartTotal).toBe(0);
     });
@@ -342,13 +347,13 @@ describe('react-shoppingcart tests', () => {
         act(() => result.current.addItem(exampleProducts[0]));
         act(() => result.current.addItem(exampleProducts[1]));
 
-        expect(result.current.totalItems).toBe(2);
+        expect(result.current.totalNumberItems).toBe(2);
 
         // Remove item
         act(() => result.current.removeItem(exampleProducts[0]));
 
         expect(result.current.items.length).toBe(1);
-        expect(result.current.totalItems).toBe(1);
+        expect(result.current.totalNumberItems).toBe(1);
         expect(result.current.totalUniqueItems).toBe(1);
         expect(result.current.cartTotal).toBe(exampleProducts[1].price);
     });
@@ -363,7 +368,7 @@ describe('react-shoppingcart tests', () => {
         act(() => result.current.addItem(exampleProducts[0]));
         act(() => result.current.addItem(exampleProducts[1]));
 
-        expect(result.current.totalItems).toBe(2);
+        expect(result.current.totalNumberItems).toBe(2);
 
         // Calc expected totals
         const totalBeforeDiscount =
@@ -374,12 +379,13 @@ describe('react-shoppingcart tests', () => {
         act(() => result.current.addDiscount(exampleDiscounts[0]));
 
         expect(result.current.discount).toEqual(exampleDiscounts[0]);
-        expect(result.current.cartDiscountTotal).toEqual(
+        expect(result.current.totalDiscountAmount).toEqual(
             exampleDiscounts[0].value,
         );
+
         expect(result.current.cartNetTotal).toEqual(netTotal);
         expect(result.current.cartDiscountText).toEqual('$20.00 off');
-        expect(result.current.cartTotal).toEqual(totalBeforeDiscount);
+        expect(result.current.cartTotal).toEqual(netTotal);
     });
 
     test('Add percent discount', async () => {
@@ -392,7 +398,7 @@ describe('react-shoppingcart tests', () => {
         act(() => result.current.addItem(exampleProducts[0]));
         act(() => result.current.addItem(exampleProducts[1]));
 
-        expect(result.current.totalItems).toBe(2);
+        expect(result.current.totalNumberItems).toBe(2);
 
         // Calc expected totals
         const totalBeforeDiscount =
@@ -407,7 +413,7 @@ describe('react-shoppingcart tests', () => {
         expect(result.current.discount).toEqual(exampleDiscounts[1]);
         expect(result.current.cartNetTotal).toEqual(netTotal);
         expect(result.current.cartDiscountText).toEqual('10% off');
-        expect(result.current.cartTotal).toEqual(totalBeforeDiscount);
+        expect(result.current.cartTotal).toEqual(netTotal);
     });
 
     test('Remove discount', async () => {
@@ -420,7 +426,7 @@ describe('react-shoppingcart tests', () => {
         act(() => result.current.addItem(exampleProducts[0]));
         act(() => result.current.addItem(exampleProducts[1]));
 
-        expect(result.current.totalItems).toBe(2);
+        expect(result.current.totalNumberItems).toBe(2);
 
         // Calc expected totals
         const totalBeforeDiscount =
@@ -436,7 +442,7 @@ describe('react-shoppingcart tests', () => {
         expect(result.current.discount).toEqual(exampleDiscounts[1]);
         expect(result.current.cartNetTotal).toEqual(netTotal);
         expect(result.current.cartDiscountText).toEqual('10% off');
-        expect(result.current.cartTotal).toEqual(totalBeforeDiscount);
+        expect(result.current.cartTotal).toEqual(netTotal);
 
         // Remove discount
         act(() => result.current.removeDiscount());
@@ -446,6 +452,66 @@ describe('react-shoppingcart tests', () => {
         expect(result.current.cartNetTotal).toEqual(totalBeforeDiscount);
         expect(result.current.cartDiscountText).toEqual('');
         expect(result.current.cartTotal).toEqual(totalBeforeDiscount);
+    });
+
+    test('Add shipping value', async () => {
+        const { result } = renderHook(() => useCart(), {
+            wrapper: CartProvider,
+        });
+        act(() => result.current.emptyCart());
+
+        // Add items
+        act(() => result.current.addItem(exampleProducts[0]));
+        act(() => result.current.addItem(exampleProducts[1]));
+
+        expect(result.current.totalNumberItems).toBe(2);
+
+        // Calc expected totals
+        const totalBeforeShipping =
+            exampleProducts[0].price + exampleProducts[1].price;
+        const shippingAmount = exampleShipping.cost;
+        const totalCartValue = totalBeforeShipping + shippingAmount;
+
+        // Add shipping
+        act(() => result.current.addShipping(exampleShipping));
+
+        expect(result.current.shipping).toEqual(exampleShipping);
+        expect(result.current.totalShippingAmount).toEqual(shippingAmount);
+        expect(result.current.cartNetTotal).toEqual(
+            totalCartValue - shippingAmount,
+        );
+        expect(result.current.cartTotal).toEqual(totalCartValue);
+    });
+
+    test('Add and remove shipping value', async () => {
+        const { result } = renderHook(() => useCart(), {
+            wrapper: CartProvider,
+        });
+        act(() => result.current.emptyCart());
+
+        // Add items
+        act(() => result.current.addItem(exampleProducts[0]));
+        act(() => result.current.addItem(exampleProducts[1]));
+
+        expect(result.current.totalNumberItems).toBe(2);
+
+        // Calc expected totals
+        const totalBeforeShipping =
+            exampleProducts[0].price + exampleProducts[1].price;
+        const shippingAmount = exampleShipping.cost;
+        const totalCartValue = totalBeforeShipping + shippingAmount;
+
+        // Add shipping
+        act(() => result.current.addShipping(exampleShipping));
+
+        expect(result.current.shipping).toEqual(exampleShipping);
+        expect(result.current.cartTotal).toEqual(totalCartValue);
+
+        // remove shipping
+        act(() => result.current.removeShipping());
+
+        expect(result.current.shipping).toEqual({});
+        expect(result.current.cartTotal).toEqual(totalBeforeShipping);
     });
 
     test('Check cartTotal', async () => {
@@ -460,9 +526,45 @@ describe('react-shoppingcart tests', () => {
 
         // Add another item
         act(() => result.current.addItem(exampleProducts[0]));
-        const totalItems = result.current.totalItems;
-        expect(totalItems).toBe(2);
+
+        expect(result.current.totalNumberItems).toBe(2);
         expect(result.current.cartTotal).toEqual(exampleProducts[0].price * 2);
+    });
+
+    test('Check cartTotal with discount & shipping', async () => {
+        const { result } = renderHook(() => useCart(), {
+            wrapper: CartProvider,
+        });
+        act(() => result.current.emptyCart());
+
+        // Add a few items
+        act(() => result.current.addItem(exampleProducts[0]));
+        act(() => result.current.addItem(exampleProducts[1]));
+
+        // Add discount
+        act(() => result.current.addDiscount(exampleDiscounts[0]));
+
+        // Add shipping
+        act(() => result.current.addShipping(exampleShipping));
+
+        const expectedCartItemsAmount =
+            exampleProducts[0].price + exampleProducts[1].price;
+        const expectedCartDiscount = exampleDiscounts[0].value;
+        const expectedNetCartAmount =
+            expectedCartItemsAmount - expectedCartDiscount;
+
+        const expectedCartShipping = exampleShipping.cost;
+
+        const expectedCartTotal =
+            expectedCartItemsAmount -
+            expectedCartDiscount +
+            expectedCartShipping;
+
+        expect(result.current.totalNumberItems).toBe(2);
+        expect(result.current.cartNetTotal).toBe(expectedNetCartAmount);
+        expect(result.current.totalDiscountAmount).toBe(expectedCartDiscount);
+        expect(result.current.totalShippingAmount).toBe(exampleShipping.cost);
+        expect(result.current.cartTotal).toEqual(expectedCartTotal);
     });
 
     test('Check empty cart', async () => {
@@ -475,14 +577,14 @@ describe('react-shoppingcart tests', () => {
         act(() => result.current.addItem(exampleProducts[0]));
 
         expect(result.current.items).toHaveLength(1);
-        expect(result.current.totalItems).toBe(1);
+        expect(result.current.totalNumberItems).toBe(1);
         expect(result.current.totalUniqueItems).toBe(1);
 
         // Empty cart
         act(() => result.current.emptyCart());
 
         expect(result.current.items).toHaveLength(0);
-        expect(result.current.totalItems).toBe(0);
+        expect(result.current.totalNumberItems).toBe(0);
         expect(result.current.totalUniqueItems).toBe(0);
         expect(result.current.cartTotal).toBe(0);
     });
@@ -500,7 +602,7 @@ describe('react-shoppingcart tests', () => {
         act(() => result.current.addItem(exampleProducts[0]));
 
         expect(result.current.items).toHaveLength(1);
-        expect(result.current.totalItems).toBe(1);
+        expect(result.current.totalNumberItems).toBe(1);
         expect(result.current.totalUniqueItems).toBe(1);
         expect(result.current.currency).toBe('USD');
     });
@@ -518,7 +620,7 @@ describe('react-shoppingcart tests', () => {
         act(() => result.current.addItem(exampleProducts[0]));
 
         expect(result.current.items).toHaveLength(1);
-        expect(result.current.totalItems).toBe(1);
+        expect(result.current.totalNumberItems).toBe(1);
         expect(result.current.totalUniqueItems).toBe(1);
         expect(result.current.currency).toBe('AUD');
     });
@@ -538,7 +640,7 @@ describe('react-shoppingcart tests', () => {
         act(() => result.current.addItem(exampleProducts[0]));
         act(() => result.current.addItem(exampleProducts[1]));
 
-        expect(result.current.totalItems).toBe(2);
+        expect(result.current.totalNumberItems).toBe(2);
 
         // Calc expected totals
         const totalBeforeDiscount =
@@ -550,7 +652,7 @@ describe('react-shoppingcart tests', () => {
 
         expect(result.current.cartNetTotal).toEqual(netTotal);
         expect(result.current.cartDiscountText).toEqual('20,00 € off');
-        expect(result.current.cartTotal).toEqual(totalBeforeDiscount);
+        expect(result.current.cartTotal).toEqual(netTotal);
     });
 
     test('Check set locale', async () => {
@@ -566,7 +668,7 @@ describe('react-shoppingcart tests', () => {
         act(() => result.current.addItem(exampleProducts[0]));
 
         expect(result.current.items).toHaveLength(1);
-        expect(result.current.totalItems).toBe(1);
+        expect(result.current.totalNumberItems).toBe(1);
         expect(result.current.totalUniqueItems).toBe(1);
         expect(result.current.locale).toBe('en-AU');
     });
@@ -584,7 +686,7 @@ describe('react-shoppingcart tests', () => {
         act(() => result.current.addItem(exampleProducts[0]));
 
         expect(result.current.items).toHaveLength(1);
-        expect(result.current.totalItems).toBe(1);
+        expect(result.current.totalNumberItems).toBe(1);
         expect(result.current.totalUniqueItems).toBe(1);
         expect(result.current.locale).toBe('en-US');
     });
@@ -721,5 +823,42 @@ describe('react-shoppingcart tests', () => {
         act(() => result.current.removeDiscount());
 
         expect(handleDiscountRemoved).toHaveBeenCalled();
+    });
+
+    test('Check hook - Shipping added', async () => {
+        const handleShippingAdded = jest.fn();
+        const wrapper = ({ children }: any) => (
+            <CartProvider onShippingAdd={cart => handleShippingAdded(cart)}>
+                {children}
+            </CartProvider>
+        );
+        const { result } = renderHook(() => useCart(), { wrapper });
+        act(() => result.current.emptyCart());
+
+        // Add Shipping
+        act(() => result.current.addShipping(exampleShipping));
+
+        expect(handleShippingAdded).toHaveBeenCalled();
+    });
+
+    test('Check hook - Shipping removed', async () => {
+        const handleShippingRemoved = jest.fn();
+        const wrapper = ({ children }: any) => (
+            <CartProvider
+                onShippingRemove={cart => handleShippingRemoved(cart)}
+            >
+                {children}
+            </CartProvider>
+        );
+        const { result } = renderHook(() => useCart(), { wrapper });
+        act(() => result.current.emptyCart());
+
+        // Add Shipping
+        act(() => result.current.addShipping(exampleShipping));
+
+        // Remove Shipping
+        act(() => result.current.removeShipping());
+
+        expect(handleShippingRemoved).toHaveBeenCalled();
     });
 });

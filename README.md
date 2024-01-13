@@ -30,6 +30,7 @@ A React Context provider for quickly and easily building a shopping cart using N
 - Supports hooks to listen for events
 - Written in Typescript
 - Supports discount codes
+- Supports shipping costs
 - Supports product variants - Size, colour etc
 - Supports cart metadata
 
@@ -75,6 +76,8 @@ export default function App({ Component, pageProps }: AppProps) {
 | `onItemRemove`      | _No_     | Triggered on items are removed from your cart using `removeItem()`.                           |
 | `onDiscountAdd`     | _No_     | Triggered when a discount is added using `addDiscount()`.                                     | 
 | `onDiscountRemove`  | _No_     | Triggered when a discount is removed using `removeDiscount()`.                                |
+| `onShippingAdd`     | _No_     | Triggered when a shipping is added using `addShipping()`.                                     | 
+| `onShippingRemove`  | _No_     | Triggered when a shipping is removed using `removeShipping()`.                                |
 | `onEmptyCart`       | _No_     | Triggered on `emptyCart()` is called.                                                         |
 | `onMetadataUpdate`  | _No_     | Triggered when `metadata` is changed in your cart using `setMetadata()` or `clearMetadata()`. |
 | `currency        `  | _No_     | Used to set the `currency` formatting of the discount. Defaults to `USD`.                     |
@@ -89,7 +92,7 @@ You may want to use hooks to check your backend server for things like:
 - The `price` of an item is correct
 - The `cartTotal` matches your expected value in database
 
-Available Hooks are: `onItemAdd`, `onItemUpdate`, `onItemRemove`, `onDiscountAdd`, `onDiscountRemove`, `onEmptyCart` and `onMetadataUpdate`.
+Available Hooks are: `onItemAdd`, `onItemUpdate`, `onItemRemove`, `onDiscountAdd`, `onDiscountRemove`, `onShippingAdd`, `onShippingRemove`, `onEmptyCart` and `onMetadataUpdate`.
 
 On the `<CartProvider>` you can add any hooks you need to listen on:
 
@@ -119,19 +122,21 @@ const {
     removeItem,
     getItem,
     updateItemQuantity,
-    discount,
     addDiscount,
     removeDiscount,
-    emptyCart,
     setMetadata,
     clearMetadata,
     metadata,
-    totalItems,
+    totalShippingAmount,
+    totalDiscountAmount,
+    totalItemsAmount,
+    discount,
+    cartDiscountText,
+    totalNumberItems
     totalUniqueItems,
     cartTotal,
-    cartDiscountTotal,
-    cartDiscountText,
     cartNetTotal,
+    emptyCart,
 } = useCart();
 ```
 
@@ -306,7 +311,7 @@ Used to add a `discount` to the cart. You will want to ensure this discount is a
 | `id`                | _Yes_     | `id` for the discount                                                                          |
 | `code`              | _Yes_     | `code` for the discount being added. This would be what is advised to the customer and entered at checkout.                                                                                                                          |
 | `type       `       | _Yes_     | `type` of discount. Allowed values are: `amount` and `percent`.                                |
-| `value       `      | _Yes_     | `value` to be discounted in whole number. Eg: `1000`` is `$10.00` discount or `10%` depending on type. |
+| `value       `      | _Yes_     | `value` to be discounted in whole number. Eg: `1000` is `$10.00` discount or `10%` depending on type. |
 
 
 ``` js
@@ -334,6 +339,43 @@ const discount = {
 }
 <button
     onClick={() => removeDiscount()}
+>
+```
+
+## shipping
+
+`shipping` returns an object if shipping is applied else it returns an empty object `{}`.
+
+## addShipping
+
+Used to add `shipping` to the cart. You will want to ensure this shipping is allowed and valid on your backend. You can do this by listening on the `onShippingAdd` or `onShippingRemove` event to validate and remove if required.
+
+| Prop                | Required  | Description                                                                                    |
+| ------------------- | --------- | ---------------------------------------------------------------------------------------------- | 
+| `description`       | _Yes_     | `description` for the discount being added. This would be what is advised to the customer and entered at checkout.                                                                                                                          |
+| `costs`             | _Yes_     | Shipping `costs` to be adding as a whole number. Eg: `1000` is `$10.00`                        |
+
+``` js
+const shipping = {
+    description: 'Flat rate shipping',
+    costs: 1000,
+}
+<button
+    onClick={() => addShipping(shipping)}
+>
+```
+
+## removeShipping
+
+Used to remove `shipping` from the cart. 
+
+``` js
+const shipping = {
+    description: 'Flat rate shipping',
+    costs: 1000,
+}
+<button
+    onClick={() => removeShipping()}
 >
 ```
 
@@ -375,19 +417,19 @@ Used to clear whetever `metadata` is currently set on the cart.
 
 Returns whatever `metadata` is currently set on the cart.
 
-## totalItems
+## totalNumberItems
 
-Returns the total items in the cart. This adds the quantity of all items in the cart to give a total number of items being purchased.
+Returns the total number of items in the cart. This adds the quantity of all items in the cart to give a total number of items being purchased.
 
 ## totalUniqueItems
 
 Returns the total unique items in the cart. This ignores the quantity and simply counts all unique products in the cart.
 
-## cartTotal
+## totalShippingAmount
 
-Returns the total value in the cart. This calculates the total price by adding all items (considering their quantity) to come to a grand total. The value is in whole number. Eg: `1000` is `$10.00`.
+This value is `0` by default. If shipping is added, the total shipping is caluculated and stored in this value.
 
-## cartDiscountTotal
+## totalDiscountAmount
 
 This value is `0` by default. If a discount is added, the total discount is caluculated and stored in this value. Eg: If the discount is a percent, this value will store the total discounted `$` based on the set `%`. 
 
@@ -395,9 +437,17 @@ This value is `0` by default. If a discount is added, the total discount is calu
 
 This value stores a nice discount value which can be displayed on the cart. Eg: If the discount is set to $20.00 then the text will be: `$20.00 off`. Depending on the `currency` and `locale` set, this same text in `Euro` will be: `20,00 € off`.
 
+## totalItemsAmount
+
+This value stores the total amount of just the items. This is a total of the item price * the item quantity.
+
 ## cartNetTotal
 
-This value stores the net total taking into account any discounts. Eg: This value is: `cartTotal` - `cartDiscountTotal` = `cartNetTotal`.
+This value stores the net total taking into account any discounts. Eg: This value is: `cartTotal` - `totalDiscountAmount` = `cartNetTotal`.
+
+## cartTotal
+
+Returns the total value in the cart including `totalDiscountAmount` and `totalShippingAmount`. Essentially it's `totalItemsAmount` - `totalDiscountAmount` + `totalShippingAmount` = `cartTotal`. The value is in whole number. Eg: `1000` is `$10.00`.
 
 # Example
 

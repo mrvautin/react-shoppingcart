@@ -1,6 +1,6 @@
 {
   "name": "@mrvautin/react-shoppingcart",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A React Context provider to quickly and easily build a shopping cart using Next.js or any other React framework.",
   "license": "Apache-2.0",
   "repository": {
@@ -31,12 +31,13 @@
     "url": "https://markmoffat.com/"
   },
   "scripts": {
-    "build": "microbundle --jsx React.createElement --jsxFragment React.Fragment --no-compress",
+    "build": "run-s clean && microbundle --jsx React.createElement --jsxFragment React.Fragment --no-compress",
     "start": "microbundle watch --jsx React.createElement --jsxFragment React.Fragment --no-compress",
     "prepare": "run-s build",
     "test": "jest",
     "lint": "eslint .",
-    "predeploy": "cd example && yarn install && yarn run build"
+    "predeploy": "cd example && yarn install && yarn run build",
+    "clean": "rimraf dist"
   },
   "peerDependencies": {
     "react": "^18.2.0",

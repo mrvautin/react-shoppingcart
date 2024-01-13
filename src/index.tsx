@@ -26,6 +26,11 @@ export interface Discount {
     value: number;
 }
 
+export interface Shipping {
+    description: string;
+    cost: number;
+}
+
 export interface Metadata {
     [key: string]: any;
 }
@@ -36,35 +41,68 @@ export interface Storage {
     metadata: Metadata;
 }
 
+export const initialState: any = {
+    items: [],
+    discount: {},
+    shipping: {},
+    totalUniqueItems: 0,
+    totalNumberItems: 0,
+    totalDiscountAmount: 0,
+    cartDiscountText: '',
+    totalShippingAmount: 0,
+    cartNetTotal: 0,
+    totalItemsAmount: 0,
+    cartTotal: 0,
+    currency: 'USD',
+    locale: 'en-US',
+    cartId: defaultCartId,
+};
+
 type UpdateDirection = 'increase' | 'decrease';
 type DiscountTypes = 'amount' | 'percent';
 
 export interface CartProviderState {
-    items: Item[];
-    discount?: Discount;
+    // Totals
+    totalItemsAmount: number;
+    totalUniqueItems: number;
+    cartNetTotal: number;
+    cartTotal: number;
+    totalNumberItems: number;
+
+    // Items
     addItem: (item: Item, quantity?: number) => void;
     removeItem: (item: Item) => void;
+    getItem: (item: Item) => Item;
     updateItemQuantity: (
         item: Item,
         direction: UpdateDirection,
-        quantity: number,
+        quantity?: number,
     ) => void;
+    items: Item[];
+
+    // Discounts
     addDiscount: (discount: Discount) => void;
     removeDiscount: () => void;
-    emptyCart: () => void;
-    getItem: (item: any) => any | undefined;
+    discount: Discount;
+    cartDiscountText: string;
+    totalDiscountAmount: number;
+
+    // Shipping
+    addShipping: (shipping: Shipping) => void;
+    removeShipping: () => void;
+    shipping: Shipping;
+    totalShippingAmount: number;
+
+    // Metadata
     setMetadata: (metadata: Metadata) => void;
     clearMetadata: () => void;
-    metadata?: Metadata;
-    totalItems: () => void;
-    totalUniqueItems: () => void;
-    cartTotal: () => void;
-    cartDiscountTotal: number;
-    cartDiscountText: string;
-    cartNetTotal: number;
-    cartId: string;
+    metadata: Metadata;
+
+    // Cart
+    emptyCart: () => void;
     currency: string;
     locale: string;
+    cartId: string;
 }
 
 export type Actions =
@@ -73,23 +111,11 @@ export type Actions =
     | { type: 'UPDATE_ITEM'; itemId: Item['itemId']; payload: object }
     | { type: 'ADD_DISCOUNT'; payload: Discount }
     | { type: 'REMOVE_DISCOUNT' }
+    | { type: 'ADD_SHIPPING'; payload: Shipping }
+    | { type: 'REMOVE_SHIPPING' }
     | { type: 'EMPTY_CART' }
     | { type: 'CLEAR_CART_META' }
     | { type: 'SET_CART_META'; payload: Metadata };
-
-export const initialState: any = {
-    items: [],
-    discount: {},
-    totalItems: 0,
-    totalUniqueItems: 0,
-    cartDiscountTotal: 0,
-    cartDiscountText: '',
-    cartNetTotal: 0,
-    cartTotal: 0,
-    currency: 'USD',
-    locale: 'en-US',
-    cartId: defaultCartId,
-};
 
 // Create and export context
 const CartContext = createContext<CartProviderState | undefined>(initialState);
@@ -154,6 +180,27 @@ const reducer = (state: CartProviderState, action: Actions) => {
             );
         }
 
+        case 'ADD_SHIPPING': {
+            const updatedState = {
+                ...state,
+                shipping: {
+                    ...action.payload,
+                },
+            };
+
+            return updateState(updatedState, state.items);
+        }
+
+        case 'REMOVE_SHIPPING': {
+            return updateState(
+                {
+                    ...state,
+                    shipping: {},
+                },
+                state.items,
+            );
+        }
+
         case 'EMPTY_CART': {
             return initialState;
         }
@@ -186,40 +233,58 @@ const updateState = (state = initialState, items: Item[]) => {
         ...state,
         items: getItemTotals(items),
         discount: state.discount,
-        totalItems: getTotalItems(items),
+        shipping: state.shipping,
+        totalNumberItems: getTotalNumberItems(items),
         totalUniqueItems,
-        cartDiscountTotal: calculateDiscount(items, state.discount),
+        totalDiscountAmount: calculateDiscount(items, state.discount),
+        totalShippingAmount: calculateShipping(state.shipping),
         cartDiscountText: getDiscountText(state.discount),
         cartNetTotal: calculateNetTotal(items, state.discount),
-        cartTotal: getCartTotal(items),
+        totalItemsAmount: getTotalItemsAmount(items),
+        cartTotal: getCartTotal(items, state.discount, state.shipping),
     };
 };
 
 // Gets the total unique items not considering quantity
 const getTotalUniqueItems = (items: Item[]) => items.length;
 
-const getItemTotals = (items: Item[]) =>
-    items.map(item => ({
+const getItemTotals = (items: Item[]) => {
+    return items.map(item => ({
         ...item,
         itemTotal: item.price * item.quantity!,
     }));
+};
+
+const getTotalNumberItems = (items: Item[]) => {
+    return items.reduce((sum: number, item: Item) => sum + item.quantity!, 0);
+};
 
 // Gets the cart total amount
-const getCartTotal = (items: Item[]) => {
-    return items.reduce(
-        (total, item) => total + item.quantity! * item.price,
-        0,
-    );
+const getCartTotal = (
+    items: Item[],
+    discount: Discount,
+    shipping: Shipping,
+) => {
+    let totalCartAmount = getTotalItemsAmount(items);
+
+    // If a discount is applied, minus the value from the total of the items
+    if (discount.code) {
+        totalCartAmount = totalCartAmount - calculateDiscount(items, discount);
+    }
+
+    // If shipping is applied, add the value to total amount
+    if (shipping.cost) {
+        totalCartAmount = totalCartAmount + calculateShipping(shipping);
+    }
+
+    return totalCartAmount;
 };
 
 // Gets the cart net amount minus the discount applied
 const calculateNetTotal = (items: Item[], discount: Discount) => {
-    const totalCartAmount = items.reduce(
-        (total, item) => total + item.quantity! * item.price,
-        0,
-    );
+    const totalCartAmount = getTotalItemsAmount(items);
 
-    // If discount applied, minute discount from the total
+    // If discount applied, minus discount from the total
     if (discount.code) {
         return totalCartAmount - calculateDiscount(items, discount);
     }
@@ -250,16 +315,17 @@ const getDiscountText = (discount: Discount) => {
 };
 
 // Gets total amount of items adding quantity of each
-const getTotalItems = (items: Item[]) => {
-    return items.reduce((sum: number, item: Item) => sum + item.quantity!, 0);
+const getTotalItemsAmount = (items: Item[]) => {
+    // return items.reduce((sum: number, item: Item) => sum + item.quantity!, 0);
+    return items.reduce(
+        (total, item) => total + item.quantity! * item.price,
+        0,
+    );
 };
 
 // Gets total amount of items adding quantity of each
 const calculateDiscount = (items: Item[], discount: Discount) => {
-    const totalCartAmount = items.reduce(
-        (total, item) => total + item.quantity! * item.price,
-        0,
-    );
+    const totalAmountOfItems = getTotalItemsAmount(items);
 
     // If a discount is found
     if (discount.code) {
@@ -270,11 +336,22 @@ const calculateDiscount = (items: Item[], discount: Discount) => {
 
         // If type is percent, calc the % of the total and return
         if (discount.type === 'percent') {
-            return totalCartAmount * (discount.value / 100 / 100);
+            return totalAmountOfItems * (discount.value / 100 / 100);
         }
     }
 
     // No discount, return zero
+    return 0;
+};
+
+// Calculates the shipping which should be applied to the cart
+const calculateShipping = (shipping: Shipping) => {
+    // If a shipping value is present
+    if (shipping.cost) {
+        return shipping.cost;
+    }
+
+    // No shipping value, return zero
     return 0;
 };
 
@@ -299,6 +376,8 @@ export const CartProvider: React.FC<{
     onItemRemove?: (payload: object) => void;
     onDiscountAdd?: (payload: object) => void;
     onDiscountRemove?: (payload: object) => void;
+    onShippingAdd?: (payload: object) => void;
+    onShippingRemove?: (payload: object) => void;
     onEmptyCart?: (payload: object) => void;
     onMetadataUpdate?: (payload: object) => void;
     storage?: (
@@ -315,6 +394,8 @@ export const CartProvider: React.FC<{
     onItemRemove,
     onDiscountAdd,
     onDiscountRemove,
+    onShippingAdd,
+    onShippingRemove,
     onEmptyCart,
     onMetadataUpdate,
     storage = cartStorage,
@@ -331,6 +412,7 @@ export const CartProvider: React.FC<{
             locale: cartLocale,
             items: [],
             discount: {},
+            shipping: {},
             metadata: {},
         }),
     );
@@ -477,6 +559,29 @@ export const CartProvider: React.FC<{
         onDiscountRemove && onDiscountRemove({});
     };
 
+    // Adds shipping value to the cart
+    const addShipping = (shipping: Shipping) => {
+        if (!shipping) {
+            throw new Error('Please provide shipping data to add.');
+        }
+
+        dispatch({
+            type: 'ADD_SHIPPING',
+            payload: shipping,
+        });
+
+        onShippingAdd && onShippingAdd(shipping);
+    };
+
+    // Remove shipping data from the cart
+    const removeShipping = () => {
+        dispatch({
+            type: 'REMOVE_SHIPPING',
+        });
+
+        onShippingRemove && onShippingRemove({});
+    };
+
     // Sets and updates the cart metadata
     const setMetadata = (metadata: Metadata) => {
         if (!metadata) {
@@ -528,6 +633,8 @@ export const CartProvider: React.FC<{
                 clearMetadata,
                 addDiscount,
                 removeDiscount,
+                addShipping,
+                removeShipping,
                 emptyCart,
                 currency: !currency ? 'USD' : currency,
                 locale: !locale ? 'en-US' : locale,
