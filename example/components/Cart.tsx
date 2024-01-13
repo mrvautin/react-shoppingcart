@@ -1,5 +1,5 @@
 import React from 'react';
-import { useCart } from '@mrvautin/react-shoppingcart';
+import { Item, Discount, Shipping, useCart } from '@mrvautin/react-shoppingcart';
 
 export default function Cart() {
     const {
@@ -11,8 +11,13 @@ export default function Cart() {
         emptyCart,
         updateItemQuantity,
         cartNetTotal,
-        cartDiscountTotal,
+        totalItemsAmount,
+        totalDiscountAmount,
         cartDiscountText,
+        shipping,
+        addShipping,
+        removeShipping,
+        totalShippingAmount,
         discount,
         addDiscount,
         removeDiscount,
@@ -24,17 +29,17 @@ export default function Cart() {
             id: 'shoes',
             name: 'Shoes',
             price: 1000,
-        },
+        } as Item,
         {
             id: 'jacket',
             name: 'Jacket',
             price: 2000,
-        },
+        } as Item,
         {
             id: 'pants',
             name: 'Pants',
             price: 3000,
-        },
+        } as Item,
     ];
 
     // Discounts
@@ -43,13 +48,18 @@ export default function Cart() {
         code: "AMOUNT_DISCOUNT",
         type: "amount",
         value: 2000,
-    } as any;
+    } as Discount;
     const percentDiscount = {
         id: "discount2",
         code: "PERCENT_DISCOUNT",
         type: "percent",
         value: 1000,
-    } as any;
+    } as Discount;
+
+    const shippingCode = {
+        description: 'Flat rate shipping',
+        cost: 1000,
+    } as Shipping;
 
     function removeFromCart(item: any) {
         removeItem(item);
@@ -72,9 +82,17 @@ export default function Cart() {
         }
     }
 
-    function showDiscounts() {
-        if (discount && !discount.code) {
-          return;
+    function applyShipping() {
+        addShipping(shippingCode);
+    }
+
+    function clearShipping() {
+        removeShipping();
+    }
+
+    function getDiscounts() {
+        if (!discount || !discount.code) {
+            return;
         }
         return (
           <>
@@ -82,16 +100,40 @@ export default function Cart() {
               <td className="font-bold" colSpan={4}>
                 Discount ({cartDiscountText}):
               </td>
-              <td>{formatAmount(cartDiscountTotal)}</td>
-            </tr>
-            <tr>
-              <td className="font-bold" colSpan={4}>
-                Net total:
-              </td>
-              <td>{formatAmount(cartNetTotal)}</td>
+              <td>{formatAmount(totalDiscountAmount)}</td>
             </tr>
           </>
         );
+    }
+
+    function getShipping() {
+        if (!shipping || !shipping.cost) {
+            return;
+        }
+        return (
+            <>
+                <tr>
+                    <td className="font-bold" colSpan={4}>
+                    Shipping costs:
+                    </td>
+                    <td>{formatAmount(totalShippingAmount)}</td>
+                </tr>
+            </>
+        );
+    }
+
+    function showCartAdjustments() {
+        const adjustments = [];
+        if (discount && discount.code) {
+            adjustments.push(getDiscounts());
+        }
+        if (shipping && shipping.cost) {
+            adjustments.push(getShipping());
+        }
+        if (adjustments.length > 0) {
+            return <>{adjustments}</>;
+        }
+        return;
     }
 
     function clearDiscounts() {
@@ -125,6 +167,12 @@ export default function Cart() {
                     >
                         Remove discounts
                     </button>
+                    <button
+                        className="pure-button button-error"
+                        onClick={() => clearShipping()}
+                    >
+                        Remove shipping
+                    </button>
                 </div>
                 <div className="pure-u-1">
                     <button
@@ -138,6 +186,12 @@ export default function Cart() {
                         onClick={() => applyDiscount("percent")}
                     >
                         Add 10% discount
+                    </button>
+                    <button
+                        className="pure-button button-success"
+                        onClick={() => applyShipping()}
+                    >
+                        Add Shipping
                     </button>
                 </div>
                 <div className="pure-u-1">
@@ -154,8 +208,8 @@ export default function Cart() {
                             </tr>
                         </thead>
                         <tbody>
-                            {products.map(product => (
-                                <tr key={product.id}>
+                            {products.map((product, index) => (
+                                <tr key={"product-" + index}>
                                     <td>{product.id}</td>
                                     <td>{product.name}</td>
                                     <td>{formatAmount(product.price)}</td>
@@ -201,7 +255,7 @@ export default function Cart() {
                         </thead>
                         <tbody>
                             {items.map(item => (
-                                <tr key={item.id}>
+                                <tr key={item.cartId}>
                                     <td>{item.id}</td>
                                     <td>{item.name}</td>
                                     <td>{item.quantity}</td>
@@ -216,13 +270,25 @@ export default function Cart() {
                                     </td>
                                 </tr>
                             ))}
+                            {showCartAdjustments()}
+                            <tr>
+                                <td className="font-bold" colSpan={4}>
+                                    Items total:
+                                </td>
+                                <td>{formatAmount(totalItemsAmount)}</td>
+                            </tr>
+                            <tr>
+                                <td className="font-bold" colSpan={4}>
+                                    Net total:
+                                </td>
+                                <td>{formatAmount(cartNetTotal)}</td>
+                            </tr>
                             <tr>
                                 <td className="font-bold" colSpan={4}>
                                     Cart total:
                                 </td>
                                 <td>{formatAmount(cartTotal)}</td>
                             </tr>
-                            {showDiscounts()}
                         </tbody>
                     </table>
                 </div>
